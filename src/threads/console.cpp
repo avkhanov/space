@@ -2,22 +2,35 @@
 // Created by akhanov on 11/28/2015.
 //
 
-#include <thread>
-#include "../interface/console/InterfaceTerminalConsole.h"
+#include "console.h"
+#include "../state/GlobalState.h"
+#include "Thread.h"
+#include <iostream>
 
+SPACE_THREAD_FUNC __console_thread(SPACE_THREAD_DATA_PTR data) {
+    GlobalState *state = (GlobalState*)data;
 
-//InterfaceTerminalConsole *console = NULL;
-//std::thread *t = NULL;
-//
-//void __thread_console_contents() {
-//    console = new InterfaceTerminalConsole();
-//
-//    for(int i = 0; i < 1000; i++) {
-//
-//    }
-//
-//}
-//
-//void start_console_thread() {
-//
-//}
+    while(!state->threads.stop_console) {
+
+    }
+
+    //std::cout << "Done!!!" << std::endl;
+
+}
+
+void start_console_thread(GlobalState *state) {
+    state->threads.stop_console = 0;
+    state->threads.console_thread = new Thread(__console_thread, (SPACE_THREAD_DATA_PTR)state);
+    state->threads.console_thread->start();
+}
+
+void stop_console_thread(GlobalState *state) {
+    state->threads.stop_console = 1;
+
+    if(state->threads.console_thread != NULL) {
+        state->threads.console_thread->join();
+        delete state->threads.console_thread;
+    }
+
+    state->threads.console_thread = NULL;
+}

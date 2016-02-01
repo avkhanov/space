@@ -5,7 +5,7 @@
 #ifndef SPACE_GLOBALSTATE_H
 #define SPACE_GLOBALSTATE_H
 
-#include <thread>
+#include "../threads/Thread.h"
 
 class GlobalState {
 public:
@@ -14,10 +14,12 @@ public:
         bool stop_rendering = 0;
         bool stop_ui = 0;
 
-//        std::thread *console_thread = NULL;
-//        std::thread *render_thread = NULL;
+        Thread *console_thread = NULL;
+        Thread *render_thread = NULL;
 
     } threads;
+
+    bool stop_execution = 0;
 };
 
 

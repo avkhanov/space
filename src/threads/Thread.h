@@ -17,6 +17,7 @@
 #define PLATFORM "LINUX"
 #define SPACE_THREAD_FUNC void
 #define SPACE_THREAD_DATA_PTR void*
+#define SPACE_THREAD_HANDLE long int
 #endif
 
 class Thread {

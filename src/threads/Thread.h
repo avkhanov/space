@@ -15,8 +15,10 @@
 
 #ifdef __gnu_linux__
 #define PLATFORM "LINUX"
-#define SPACE_THREAD_FUNC void
+#include <pthread.h>
+#define SPACE_THREAD_FUNC void*
 #define SPACE_THREAD_DATA_PTR void*
+#define SPACE_THREAD_HANDLE pthread_t
 #endif
 
 class Thread {

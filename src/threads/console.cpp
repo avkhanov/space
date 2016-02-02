@@ -18,19 +18,19 @@ SPACE_THREAD_FUNC __console_thread(SPACE_THREAD_DATA_PTR data) {
 
 }
 
-void start_console_thread(GlobalState *state) {
-    state->threads.stop_console = 0;
-    state->threads.console_thread = new Thread(__console_thread, (SPACE_THREAD_DATA_PTR)state);
-    state->threads.console_thread->start();
+void start_console_thread(GlobalState &state) {
+    state.threads.stop_console = 0;
+    state.threads.console_thread = new Thread(__console_thread, (SPACE_THREAD_DATA_PTR)(&state));
+    state.threads.console_thread->start();
 }
 
-void stop_console_thread(GlobalState *state) {
-    state->threads.stop_console = 1;
+void stop_console_thread(GlobalState &state) {
+    state.threads.stop_console = 1;
 
-    if(state->threads.console_thread != NULL) {
-        state->threads.console_thread->join();
-        delete state->threads.console_thread;
+    if(state.threads.console_thread != NULL) {
+        state.threads.console_thread->join();
+        delete state.threads.console_thread;
     }
 
-    state->threads.console_thread = NULL;
+    state.threads.console_thread = NULL;
 }

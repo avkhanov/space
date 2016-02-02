@@ -7,7 +7,7 @@
 
 #include "../state/GlobalState.h"
 
-void start_render_thread(GlobalState *state);
-void stop_render_thread(GlobalState *state);
+void start_render_thread(GlobalState &state);
+void stop_render_thread(GlobalState &state);
 
 #endif //SPACE_RENDERING_H

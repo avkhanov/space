@@ -6,18 +6,15 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    GlobalState *state = new GlobalState();
+    GlobalState state;
 
     start_console_thread(state);
     start_render_thread(state);
 
-    while(!state->stop_execution);
+    while(!state.stop_execution);
 
     stop_console_thread(state);
     stop_render_thread(state);
 
-    delete state;
-
     return 0;
 }
-

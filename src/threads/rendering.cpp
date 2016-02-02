@@ -70,19 +70,19 @@ SPACE_THREAD_FUNC __render_thread(SPACE_THREAD_DATA_PTR data) {
     //exit(EXIT_SUCCESS);
 }
 
-void start_render_thread(GlobalState *state) {
-    state->threads.stop_rendering = 0;
-    state->threads.render_thread = new Thread(__render_thread, (SPACE_THREAD_DATA_PTR)state);
-    state->threads.render_thread->start();
+void start_render_thread(GlobalState &state) {
+    state.threads.stop_rendering = 0;
+    state.threads.render_thread = new Thread(__render_thread, (SPACE_THREAD_DATA_PTR)(&state));
+    state.threads.render_thread->start();
 }
 
-void stop_render_thread(GlobalState *state) {
-    state->threads.stop_rendering = 1;
+void stop_render_thread(GlobalState &state) {
+    state.threads.stop_rendering = 1;
 
-    if(state->threads.render_thread != NULL) {
-        state->threads.render_thread->join();
-        delete state->threads.render_thread;
+    if(state.threads.render_thread != NULL) {
+        state.threads.render_thread->join();
+        delete state.threads.render_thread;
     }
 
-    state->threads.render_thread = NULL;
+    state.threads.render_thread = NULL;
 }

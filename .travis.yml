@@ -1,9 +1,9 @@
-addons:
-    apt:
-        packages:
-            - cmake
-        sources:
-            - kalakris-cmake
-            
+# addons:
+#    apt:
+#        packages:
+#            - cmake
+#        sources:
+#            - kalakris-cmake
+dist: trusty
 language: cpp
 script: cmake . && make

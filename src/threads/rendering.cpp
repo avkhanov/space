@@ -16,7 +16,8 @@ static void error_callback(int error, const char* description) {
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        exit_program(__state);
+        // exit_program(__state);
+        __state->raise_signal(SIGNAL_EXIT, NULL);
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
 //        glfwSetWindowShouldClose(window, GL_TRUE);
@@ -68,6 +69,7 @@ SPACE_THREAD_FUNC __render_thread(SPACE_THREAD_DATA_PTR data) {
     glfwDestroyWindow(window);
     glfwTerminate();
     //exit(EXIT_SUCCESS);
+    __state->raise_signal(SIGNAL_EXIT, NULL);
 }
 
 void start_render_thread(GlobalState &state) {

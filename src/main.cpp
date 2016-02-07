@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
     start_console_thread(state);
     start_render_thread(state);
 
-    while(!state.stop_execution);
+    while(state.executing);
 
     stop_console_thread(state);
     stop_render_thread(state);

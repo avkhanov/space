@@ -5,5 +5,6 @@
 #include "utils.h"
 
 void exit_program(GlobalState *state) {
-    state->stop_execution = 1;
+    // state->stop_execution = 1;
+    state->executing = false;
 }

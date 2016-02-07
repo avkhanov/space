@@ -5,9 +5,18 @@
 #ifndef SPACE_GLOBALSTATE_H
 #define SPACE_GLOBALSTATE_H
 
+#include <map>
+#include <vector>
 #include "../threads/Thread.h"
 
+using namespace std;
+
+#define TYPE_SIGNAL unsigned short int
+#define SIGNAL_EXIT 0
+
 class GlobalState {
+protected:
+    map<TYPE_SIGNAL, vector<void (*)(GlobalState*, void*)>> callbacks;
 public:
     struct {
         bool stop_console = 0;
@@ -19,7 +28,11 @@ public:
 
     } threads;
 
-    bool stop_execution = 0;
+    bool executing = true;
+
+    GlobalState();
+    void register_signal_handler(TYPE_SIGNAL signal, void (*callback)(GlobalState*, void*));
+    void raise_signal(TYPE_SIGNAL signal, void *data);
 };
 
 

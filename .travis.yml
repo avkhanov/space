@@ -7,6 +7,11 @@ addons:
            - libxinerama-dev
            - libxcursor-dev
 sudo: required
-language: cpp
-script: cmake . && make
+dist: trusty
 
+language: cpp
+compiler:
+           - clang
+           - gcc
+
+script: cmake . && make

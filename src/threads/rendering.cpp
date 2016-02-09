@@ -23,26 +23,30 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 //        glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-SPACE_THREAD_FUNC __render_thread(SPACE_THREAD_DATA_PTR data) {
-    GlobalState *state = (GlobalState*)data;
+//SPACE_THREAD_FUNC __render_thread(SPACE_THREAD_DATA_PTR data) {
+void __render_thread(bool& stop_execution, void* data) {
+    GlobalState* state = (GlobalState*)data;
     __state = state;
 
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
 
-    if (!glfwInit())
+    if (!glfwInit()) {
         exit(EXIT_FAILURE);
+    }
+
     window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
-    if (!window)
-    {
+
+    if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     glfwSetKeyCallback(window, key_callback);
-    while (!glfwWindowShouldClose(window))
-    {
+
+    while (!glfwWindowShouldClose(window)) {
         float ratio;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
@@ -73,18 +77,18 @@ SPACE_THREAD_FUNC __render_thread(SPACE_THREAD_DATA_PTR data) {
 }
 
 void start_render_thread(GlobalState &state) {
-    state.threads.stop_rendering = 0;
+    /* state.threads.stop_rendering = 0;
     state.threads.render_thread = new Thread(__render_thread, (SPACE_THREAD_DATA_PTR)(&state));
-    state.threads.render_thread->start();
+    state.threads.render_thread->start(); */
 }
 
 void stop_render_thread(GlobalState &state) {
-    state.threads.stop_rendering = 1;
+    /* state.threads.stop_rendering = 1;
 
     if(state.threads.render_thread != NULL) {
         state.threads.render_thread->join();
         delete state.threads.render_thread;
     }
 
-    state.threads.render_thread = NULL;
+    state.threads.render_thread = NULL; */
 }

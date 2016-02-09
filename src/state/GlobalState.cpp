@@ -32,6 +32,29 @@ void GlobalState::spawn_thread(const std::string& name, std::function<void(bool&
         std::cout << s << std::endl;
         throw s;
     } else {
-        threads[name] = thread_func;
+        threads[name] = ThreadContainer(thread_func);
+        bool stop = false;
+    }
+}
+
+GlobalState::ThreadContainer::ThreadContainer() {
+    t = NULL;
+    stop = false;
+}
+
+GlobalState::ThreadContainer::ThreadContainer(std::function<void(bool &, void *)> thread_func) {
+    ThreadContainer();
+    set(thread_func);
+}
+
+void GlobalState::ThreadContainer::set(std::function<void(bool&, void*)> thread_func) {
+    t = new std::thread(thread_func, std::ref(stop), (void*)NULL);
+}
+
+GlobalState::ThreadContainer::~ThreadContainer() {
+    if(t != NULL) {
+        t->join();
+        delete t;
+        t = NULL;
     }
 }

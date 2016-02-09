@@ -13,8 +13,8 @@ int main(int argc, char** argv) {
 
     // start_console_thread(state);
     // start_render_thread(state);
-    state.spawn_thread("My Thread", callback_func);
-    state.spawn_thread("My Thread", callback_func);
+    state.spawn_thread("render_thread", __render_thread);
+    //  state.spawn_thread("My Thread", callback_func);
     
     while(state.executing);
 

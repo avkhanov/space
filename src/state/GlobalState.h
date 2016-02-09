@@ -18,14 +18,21 @@
 
 class GlobalState {
 protected:
-    struct _thread {
+    class ThreadContainer {
+    public:
         std::thread* t = NULL;
-        bool halt = false;
+        // std::thread t;
+        bool stop = false;
+
+        ThreadContainer();
+        ThreadContainer(std::function<void(bool&, void*)> thread_func);
+        void set(std::function<void(bool&, void*)> thread_func);
+        ~ThreadContainer();
     };
 
     std::map<TYPE_SIGNAL, std::vector<std::function<void (GlobalState*, void*)>>> callbacks;
-    // std::map<std::string, _thread> threads;
-    std::map<std::string, std::function<void(bool&, void*)>> threads;
+    std::map<std::string, ThreadContainer> threads;
+    //std::map<std::string, std::function<void(bool&, void*)>> threads;
 
 public:
     /* struct {

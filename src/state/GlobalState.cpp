@@ -4,13 +4,13 @@
 
 #include "GlobalState.h"
 
-void GlobalState::register_signal_handler(TYPE_SIGNAL signal, void (*callback)(GlobalState*, void*)) {
+void GlobalState::register_signal_handler(unsigned short signal, function<void (GlobalState *, void *)> callback) {
     callbacks[signal].push_back(callback);
 }
 
 void GlobalState::raise_signal(TYPE_SIGNAL signal, void *data) {
-    for(auto i = callbacks[signal].begin(); i != callbacks[signal].end(); i++) {
-        (*i)(this, data);
+    for(function<void (GlobalState*, void*)> &i : callbacks[signal]) {
+        i(this, data);
     }
 }
 

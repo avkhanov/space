@@ -7,6 +7,7 @@
 
 #include <map>
 #include <vector>
+#include <functional>
 #include "../threads/Thread.h"
 
 using namespace std;
@@ -16,7 +17,7 @@ using namespace std;
 
 class GlobalState {
 protected:
-    map<TYPE_SIGNAL, vector<void (*)(GlobalState*, void*)>> callbacks;
+    map<TYPE_SIGNAL, vector<function<void (GlobalState*, void*)>>> callbacks;
 public:
     struct {
         bool stop_console = 0;
@@ -25,13 +26,12 @@ public:
 
         Thread *console_thread = NULL;
         Thread *render_thread = NULL;
-
     } threads;
 
     bool executing = true;
 
     GlobalState();
-    void register_signal_handler(TYPE_SIGNAL signal, void (*callback)(GlobalState*, void*));
+    void register_signal_handler(TYPE_SIGNAL signal, function<void(GlobalState*, void*)> callback);
     void raise_signal(TYPE_SIGNAL signal, void *data);
 };
 

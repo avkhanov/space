@@ -8,31 +8,41 @@
 #include <map>
 #include <vector>
 #include <functional>
-#include "../threads/Thread.h"
+#include <string>
+#include <thread>
 
-using namespace std;
+// using namespace std;
 
 #define TYPE_SIGNAL unsigned short int
 #define SIGNAL_EXIT 0
 
 class GlobalState {
 protected:
-    map<TYPE_SIGNAL, vector<function<void (GlobalState*, void*)>>> callbacks;
+    struct _thread {
+        std::thread* t = NULL;
+        bool halt = false;
+    };
+
+    std::map<TYPE_SIGNAL, std::vector<std::function<void (GlobalState*, void*)>>> callbacks;
+    // std::map<std::string, _thread> threads;
+    std::map<std::string, std::function<void(bool&, void*)>> threads;
+
 public:
-    struct {
+    /* struct {
         bool stop_console = 0;
         bool stop_rendering = 0;
         bool stop_ui = 0;
 
         Thread *console_thread = NULL;
         Thread *render_thread = NULL;
-    } threads;
+    } threads; */
 
     bool executing = true;
 
     GlobalState();
-    void register_signal_handler(TYPE_SIGNAL signal, function<void(GlobalState*, void*)> callback);
-    void raise_signal(TYPE_SIGNAL signal, void *data);
+    void register_signal_handler(TYPE_SIGNAL signal, std::function<void(GlobalState*, void*)> callback);
+    void raise_signal(TYPE_SIGNAL signal, void* data);
+    void spawn_thread(const std::string& name, std::function<void(bool&, void*)> thread_func);
 };
 
 

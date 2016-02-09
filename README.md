@@ -1,1 +1,2 @@
-# space
+# space [![Build Status](https://travis-ci.org/avkhanov/space.svg?branch=master)](https://travis-ci.org/avkhanov/space)
+A random C++ playground that might eventually become something...

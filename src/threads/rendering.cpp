@@ -8,7 +8,7 @@
 #include <cstdio>
 #include "../util/utils.h"
 
-GlobalState *__state = NULL;
+static GlobalState *__state = NULL;
 
 static void error_callback(int error, const char* description) {
     fputs(description, stderr);
@@ -16,37 +16,35 @@ static void error_callback(int error, const char* description) {
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        // exit_program(__state);
-        __state->raise_signal(SIGNAL_EXIT, NULL);
         glfwSetWindowShouldClose(window, GL_TRUE);
+        // __state->raise_signal(SIGNAL_EXIT, NULL);
     }
-//        glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-//SPACE_THREAD_FUNC __render_thread(SPACE_THREAD_DATA_PTR data) {
-void __render_thread(bool& stop_execution, void* data) {
-    GlobalState* state = (GlobalState*)data;
-    __state = state;
+void __render_thread(GlobalState& state, bool& stop_execution) {
+    //__state = (GlobalState*)data;
+    __state = &state;
 
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
 
     if (!glfwInit()) {
-        exit(EXIT_FAILURE);
+        __state->raise_signal(SIGNAL_EXIT, NULL);
     }
 
     window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
 
     if (!window) {
         glfwTerminate();
-        exit(EXIT_FAILURE);
+        __state->raise_signal(SIGNAL_EXIT, NULL);
     }
 
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
+
     glfwSetKeyCallback(window, key_callback);
 
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window) && !stop_execution) {
         float ratio;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
@@ -70,10 +68,12 @@ void __render_thread(bool& stop_execution, void* data) {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    __state->raise_signal(SIGNAL_EXIT, NULL);
     glfwDestroyWindow(window);
     glfwTerminate();
     //exit(EXIT_SUCCESS);
-    __state->raise_signal(SIGNAL_EXIT, NULL);
+    //__state->raise_signal(SIGNAL_EXIT, NULL);
 }
 
 void start_render_thread(GlobalState &state) {

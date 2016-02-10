@@ -10,29 +10,28 @@ void GlobalState::register_signal_handler(unsigned short signal, std::function<v
 }
 
 void GlobalState::raise_signal(TYPE_SIGNAL signal, void *data) {
-    for(std::function<void (GlobalState*, void*)> &i : callbacks[signal]) {
-        i(this, data);
+    if(callbacks.find(signal) != callbacks.end()) {
+        for (std::function<void(GlobalState *, void *)> &i : callbacks[signal]) {
+            i(this, data);
+        }
     }
 }
 
-// void exit_callback(GlobalState* state, void* data) {
-//     state->threads.stop_console = 1;
-//     state->threads.stop_rendering = 1;
-//     state->threads.stop_ui = 1;
-//     state->executing = false;
-// }
+ void exit_callback(GlobalState* state, void* data) {
+     state->shutdown();
+ }
 
 GlobalState::GlobalState() {
-    // register_signal_handler(SIGNAL_EXIT, exit_callback);
+    register_signal_handler(SIGNAL_EXIT, exit_callback);
 }
 
-void GlobalState::spawn_thread(const std::string& name, std::function<void(bool&, void*)> thread_func) {
+void GlobalState::spawn_thread(const std::string& name, THREAD_SIGNATURE thread_func) {
     if(threads.find(name) != threads.end()) {
         std::string s("Thread with the name '" + name + "' already exists");
         std::cout << s << std::endl;
         throw s;
     } else {
-        threads[name] = ThreadContainer(thread_func);
+        threads[name] = ThreadContainer(thread_func, (*this));
         bool stop = false;
     }
 }
@@ -42,13 +41,13 @@ GlobalState::ThreadContainer::ThreadContainer() {
     stop = false;
 }
 
-GlobalState::ThreadContainer::ThreadContainer(std::function<void(bool &, void *)> thread_func) {
+GlobalState::ThreadContainer::ThreadContainer(THREAD_SIGNATURE thread_func, GlobalState& s) {
     ThreadContainer();
-    set(thread_func);
+    set(thread_func, s);
 }
 
-void GlobalState::ThreadContainer::set(std::function<void(bool&, void*)> thread_func) {
-    t = new std::thread(thread_func, std::ref(stop), (void*)NULL);
+void GlobalState::ThreadContainer::set(THREAD_SIGNATURE thread_func, GlobalState& s) {
+    t = new std::thread(thread_func, std::ref(s), std::ref(stop));
 }
 
 GlobalState::ThreadContainer::~ThreadContainer() {
@@ -57,4 +56,13 @@ GlobalState::ThreadContainer::~ThreadContainer() {
         delete t;
         t = NULL;
     }
+}
+
+void GlobalState::shutdown() {
+    for(auto& i : threads) {
+        i.second.stop = true;
+        i.second.t->join();
+    }
+
+    executing = false;
 }

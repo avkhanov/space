@@ -16,6 +16,8 @@
 #define TYPE_SIGNAL unsigned short int
 #define SIGNAL_EXIT 0
 
+#define THREAD_SIGNATURE std::function<void(GlobalState&, bool&)>
+
 class GlobalState {
 protected:
     class ThreadContainer {
@@ -25,8 +27,9 @@ protected:
         bool stop = false;
 
         ThreadContainer();
-        ThreadContainer(std::function<void(bool&, void*)> thread_func);
-        void set(std::function<void(bool&, void*)> thread_func);
+        //ThreadContainer(std::function<void(bool&, void*)> thread_func);
+        ThreadContainer(THREAD_SIGNATURE thread_func, GlobalState& s);
+        void set(THREAD_SIGNATURE thread_func, GlobalState& s);
         ~ThreadContainer();
     };
 
@@ -49,7 +52,9 @@ public:
     GlobalState();
     void register_signal_handler(TYPE_SIGNAL signal, std::function<void(GlobalState*, void*)> callback);
     void raise_signal(TYPE_SIGNAL signal, void* data);
-    void spawn_thread(const std::string& name, std::function<void(bool&, void*)> thread_func);
+    void spawn_thread(const std::string& name, THREAD_SIGNATURE thread_func);
+
+    void shutdown();
 };
 
 

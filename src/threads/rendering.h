@@ -9,6 +9,6 @@
 
 void start_render_thread(GlobalState &state);
 void stop_render_thread(GlobalState &state);
-void __render_thread(bool& stop_execution, void* data);
+void __render_thread(GlobalState& state, bool& stop_execution);
 
 #endif //SPACE_RENDERING_H
